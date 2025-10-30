@@ -6,7 +6,7 @@
     <div class="row">
         @foreach($stores as $store)
             <div class="col-md-4 mb-4">
-                <div class="card">
+                <div class="card h-100">
                     @if($store->image)
                         <img src="{{ asset('images/' . $store->image) }}" class="card-img-top" alt="{{ $store->name }}">
                     @endif
