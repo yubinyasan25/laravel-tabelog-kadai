@@ -23,6 +23,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',  [WebController::class, 'index'])->name('top');
 
+use App\Http\Controllers\StoreController;
+
+// 一般ユーザーが店舗一覧を見れるページ
+Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
+
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth', 'verified'])->group(function () {
