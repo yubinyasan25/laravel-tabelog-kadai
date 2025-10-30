@@ -13,9 +13,30 @@ class StoresTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // 例：カテゴリを先に取得（存在する前提）
-        $ramenCategory = Category::where('name', 'ラーメン')->first();
-        $misoKatsuCategory = Category::where('name', '味噌カツ')->first();
+        // 名古屋グルメ用カテゴリを作成（存在しなければ自動作成）
+        $ramenCategory = Category::firstOrCreate(
+            ['name' => 'ラーメン'],
+            [
+                'description' => 'ラーメン',
+                'major_category_id' => 1, // 適宜設定
+            ]
+        );
+
+        $misoKatsuCategory = Category::firstOrCreate(
+            ['name' => '味噌カツ'],
+            [
+                'description' => '味噌カツ',
+                'major_category_id' => 1,
+            ]
+        );
+
+        $tebasakiCategory = Category::firstOrCreate(
+            ['name' => '手羽先'],
+            [
+                'description' => '手羽先',
+                'major_category_id' => 1,
+            ]
+        );
 
         // サンプル店舗を作成
         Store::create([
@@ -23,7 +44,7 @@ class StoresTableSeeder extends Seeder
             'description' => '名古屋味噌煮込みうどんの有名店。',
             'address' => '名古屋市中区栄3丁目',
             'image' => 'yamamotoya.jpg',
-            'category_id' => $misoKatsuCategory->id ?? 1, // カテゴリが見つからなければ1
+            'category_id' => $misoKatsuCategory->id,
             'recommend_flag' => true,
         ]);
 
@@ -32,10 +53,17 @@ class StoresTableSeeder extends Seeder
             'description' => '地元で人気のラーメン店。',
             'address' => '名古屋市中村区名駅2丁目',
             'image' => 'ramen1.jpg',
-            'category_id' => $ramenCategory->id ?? 1,
+            'category_id' => $ramenCategory->id,
             'recommend_flag' => false,
         ]);
 
-        // 必要に応じてさらに追加可能
+        Store::create([
+            'name' => '世界の山ちゃん',
+            'description' => '名古屋名物手羽先で有名。',
+            'address' => '名古屋市中区栄4丁目',
+            'image' => 'yamachan.jpg',
+            'category_id' => $tebasakiCategory->id,
+            'recommend_flag' => true,
+        ]);
     }
 }
