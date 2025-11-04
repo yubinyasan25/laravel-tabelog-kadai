@@ -22,4 +22,19 @@ class StoreController extends Controller
         // ビューに渡す
         return view('stores.index', compact('stores', 'categories'));
     }
+
+     /**
+     * 店舗詳細ページ
+     */
+    public function show($id)
+    {
+        // 指定IDの店舗を取得（見つからなければ404）
+        $store = Store::findOrFail($id);
+
+        // 全カテゴリを取得（サイドバー等に使う想定）
+        $categories = Category::all();
+
+        // ビューに渡す
+        return view('stores.show', compact('store', 'categories'));
+    }
 }

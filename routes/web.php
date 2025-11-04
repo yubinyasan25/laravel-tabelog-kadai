@@ -10,6 +10,7 @@ use App\Http\Controllers\WebController;
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,6 +28,9 @@ use App\Http\Controllers\StoreController;
 
 // 一般ユーザーが店舗一覧を見れるページ
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
+
+// 🆕 店舗詳細ページを追加
+Route::get('/stores/{id}', [StoreController::class, 'show'])->name('stores.show');
 
 require __DIR__.'/auth.php';
 
@@ -61,4 +65,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('checkout', 'store')->name('checkout.store');
         Route::get('checkout/success', 'success')->name('checkout.success');
     });
+
+    
+
+
+
 });
