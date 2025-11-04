@@ -4,6 +4,15 @@
 <div class="container py-5">
     <h1 class="mb-4">名古屋B級グルメカテゴリ一覧</h1>
 
+    <!-- 検索フォーム -->
+<form action="{{ route('stores.search') }}" method="GET" class="mb-4 d-flex" role="search">
+    <input type="text" name="keyword" class="form-control me-2" 
+           placeholder="店舗名・キーワードを入力"
+           value="{{ request('keyword') }}">
+    <button class="btn btn-outline-success" type="submit">検索</button>
+</form>
+
+
     <!-- カテゴリ一覧 -->
     <div class="mb-4">
         @foreach($categories as $category)

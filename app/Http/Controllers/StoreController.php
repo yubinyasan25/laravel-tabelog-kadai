@@ -11,8 +11,22 @@ class StoreController extends Controller
     /**
      * 店舗一覧ページ
      */
-    public function index()
+     public function index(Request $request)
     {
+        // 🔍 検索キーワードを取得
+        $keyword = $request->input('keyword');
+
+        // クエリビルダーを作成
+        $query = Store::query();
+
+        // 検索キーワードがある場合、店舗名・説明・住所を部分一致検索
+        if (!empty($keyword)) {
+            $query->where('name', 'like', "%{$keyword}%")
+                  ->orWhere('description', 'like', "%{$keyword}%")
+                  ->orWhere('address', 'like', "%{$keyword}%");
+        }
+
+    
         // 店舗を全件取得（おすすめ順にソート）
         $stores = Store::orderBy('recommend_flag', 'desc')->get();
 
@@ -37,4 +51,21 @@ class StoreController extends Controller
         // ビューに渡す
         return view('stores.show', compact('store', 'categories'));
     }
+
+    public function search(Request $request)
+{
+    $keyword = $request->input('keyword');
+
+    // 検索処理（名前 or 説明に部分一致）
+    $stores = Store::where('name', 'like', "%{$keyword}%")
+        ->orWhere('description', 'like', "%{$keyword}%")
+        ->get();
+
+    $categories = Category::all();
+
+    return view('stores.index', compact('stores', 'categories'))
+        ->with('keyword', $keyword);
+}
+
+    
 }

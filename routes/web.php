@@ -29,8 +29,11 @@ use App\Http\Controllers\StoreController;
 // 一般ユーザーが店舗一覧を見れるページ
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
 
-// 🆕 店舗詳細ページを追加
+// 店舗詳細ページを追加
 Route::get('/stores/{id}', [StoreController::class, 'show'])->name('stores.show');
+
+//🔍 検索用ルート
+Route::get('/search', [StoreController::class, 'search'])->name('stores.search');
 
 require __DIR__.'/auth.php';
 
