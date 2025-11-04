@@ -9,6 +9,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\WebController;
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReservationController;
 
 
 /*
@@ -69,7 +70,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('checkout/success', 'success')->name('checkout.success');
     });
 
-    
+    Route::controller(ReservationController::class)->group(function () {
+        Route::get('reservations/create', 'create')->name('reservations.create');
+        Route::post('reservations', 'store')->name('reservations.store');
+        Route::get('reservations', 'index')->name('reservations.index');
+        Route::delete('reservations/{id}', 'destroy')->name('reservations.destroy');
+    });   
 
 
 
