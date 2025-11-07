@@ -19,10 +19,12 @@ use App\Http\Controllers\{
 
 Route::get('/', [WebController::class, 'index'])->name('top');
 
+// ======================
 // 🔹 店舗関連（一般ユーザー用）
+// ======================
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
 Route::get('/stores/{id}', [StoreController::class, 'show'])->name('stores.show');
-Route::get('/search', [StoreController::class, 'search'])->name('stores.search');
+
 
 require __DIR__.'/auth.php';
 
@@ -31,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ======================
     // 商品・レビュー・お気に入り
     // ======================
-    Route::resource('products', ProductController::class);
+   Route::resource('products', ProductController::class);
     Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('favorites/{product_id}', [FavoriteController::class, 'store'])->name('favorites.store');
     Route::delete('favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
@@ -67,17 +69,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // ======================
-    //  予約関連（有料会員専用）
+    // 🔹 予約関連（ここを1つのブロックにまとめる）
     // ======================
     Route::controller(ReservationController::class)->group(function () {
         Route::get('reservations', 'index')->name('reservations.index');
         Route::delete('reservations/{id}', 'destroy')->name('reservations.destroy');
     });
 
-    //  店舗ごとの予約フォームと登録
-    Route::get('/stores/{id}/reserve', [ReservationController::class, 'create'])
-        ->name('stores.reserve_form');
-    Route::post('/stores/{id}/reserve', [ReservationController::class, 'store'])
-        ->name('stores.reserve');
+    Route::get('/stores/{id}/reserve', [ReservationController::class, 'create'])->name('stores.reserve_form');
+    Route::post('/stores/{id}/reserve', [ReservationController::class, 'store'])->name('stores.reserve');
+
+  
+
 
 });

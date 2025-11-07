@@ -41,34 +41,41 @@
                 @endif
 
                 <form action="{{ route('stores.reserve', $store->id) }}" method="POST">
-                    @csrf
-                    
-                    {{-- 日付 --}}
-                    <div class="mb-3">
-                        <label class="form-label">日付</label>
-                        <input type="date" name="date" class="form-control" required>
-                    </div>
+    @csrf
+    
+    {{-- 日付 --}}
+    <div class="mb-3">
+        <label class="form-label">日付</label>
+        <input type="date" name="reservation_date" class="form-control" required>
+    </div>
 
-                    {{-- 時間（11:00～22:00、30分刻み） --}}
-                    <div class="mb-3">
-                        <label class="form-label">時間</label>
-                        <select name="time" class="form-select" required>
-                            <option value="">選択してください</option>
-                            @for($h = 11; $h <= 22; $h++)
-                                <option value="{{ sprintf('%02d:00:00', $h) }}">{{ sprintf('%02d:00', $h) }}</option>
-                                <option value="{{ sprintf('%02d:30:00', $h) }}">{{ sprintf('%02d:30', $h) }}</option>
-                            @endfor
-                        </select>
-                    </div>
+    {{-- 時間 --}}
+    <div class="mb-3">
+        <label class="form-label">時間</label>
+        <select name="reservation_time" class="form-select" required>
+            <option value="">選択してください</option>
+            @for($h = 11; $h <= 22; $h++)
+                <option value="{{ sprintf('%02d:00', $h) }}">{{ sprintf('%02d:00', $h) }}</option>
+                @if ($h < 22)
+                    <option value="{{ sprintf('%02d:30', $h) }}">{{ sprintf('%02d:30', $h) }}</option>
+                @endif
+            @endfor
+        </select>
+    </div>
 
-                    {{-- 人数（1～50名） --}}
-                    <div class="mb-3">
-                        <label class="form-label">人数</label>
-                        <input type="number" name="people" class="form-control" min="1" max="50" required>
-                    </div>
+    {{-- 人数 --}}
+    <div class="mb-3">
+        <label class="form-label">人数</label>
+        <select name="people" class="form-select" required>
+            <option value="">選択してください</option>
+            @for ($i = 1; $i <= 20; $i++)
+                <option value="{{ $i }}">{{ $i }}名</option>
+            @endfor
+        </select>
+    </div>
 
-                    <button type="submit" class="btn btn-primary">予約する</button>
-                </form>
+    <button type="submit" class="btn btn-primary">予約する</button>
+</form>
             </div>
         </div>
     </div>

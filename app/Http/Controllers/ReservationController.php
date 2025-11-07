@@ -15,13 +15,6 @@ class ReservationController extends Controller
     public function create($store_id)
     {
         $store = Store::findOrFail($store_id);
-
-        // 有料会員のみ予約可能
-        if (!Auth::user()->is_paid_member) {
-            return redirect()->route('plans.index')->with('error', '予約機能は有料会員限定です。');
-        }
-
-        // 専用ビューに変更（stores.show ではなく reservations.create）
         return view('reservations.create', compact('store'));
     }
 
@@ -30,9 +23,7 @@ class ReservationController extends Controller
      */
     public function store(Request $request, $store_id)
     {
-        
-
-        // バリデーション追加（11〜22時、1〜50人）
+        // バリデーション（11時〜22時・1〜50名）
         $validated = $request->validate([
             'reservation_date' => 'required|date|after_or_equal:today',
             'reservation_time' => [
