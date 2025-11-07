@@ -9,31 +9,39 @@ use App\Models\Category;
 class StoreController extends Controller
 {
     /**
-     * 店舗一覧ページ（検索含む）
+     * 店舗一覧ページ（検索＋カテゴリ絞り込み）
      */
     public function index(Request $request)
     {
-        // 🔍 検索キーワードを取得
+        // 🔍 検索キーワードとカテゴリIDを取得
         $keyword = $request->input('keyword');
+        $categoryId = $request->input('category');
 
-        // クエリビルダーを作成
+        // クエリビルダー作成
         $query = Store::query();
 
-        // 検索キーワードがある場合、店舗名・説明・住所を部分一致検索
+        // キーワード検索
         if (!empty($keyword)) {
-            $query->where('name', 'like', "%{$keyword}%")
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
                   ->orWhere('description', 'like', "%{$keyword}%")
                   ->orWhere('address', 'like', "%{$keyword}%");
+            });
         }
 
-        // 検索または全件を取得（おすすめ順）
+        // カテゴリ絞り込み
+        if (!empty($categoryId)) {
+            $query->where('category_id', $categoryId);
+        }
+
+        // おすすめ順で取得
         $stores = $query->orderBy('recommend_flag', 'desc')->get();
 
-        // カテゴリを全件取得
+        // 全カテゴリ取得（サイドバーやボタン表示用）
         $categories = Category::all();
 
-        // ビューに渡す
-        return view('stores.index', compact('stores', 'categories', 'keyword'));
+        // ビューに渡す（categoryIdも渡す）
+        return view('stores.index', compact('stores', 'categories', 'keyword', 'categoryId'));
     }
 
     /**
@@ -41,13 +49,9 @@ class StoreController extends Controller
      */
     public function show($id)
     {
-        // 指定IDの店舗を取得（見つからなければ404）
         $store = Store::findOrFail($id);
-
-        // 全カテゴリを取得（サイドバー等に使う想定）
         $categories = Category::all();
 
-        // ビューに渡す
         return view('stores.show', compact('store', 'categories'));
     }
 }

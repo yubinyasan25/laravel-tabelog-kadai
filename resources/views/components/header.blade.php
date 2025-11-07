@@ -4,7 +4,7 @@
 
             {{-- 🔹 ロゴクリックでトップページへ --}}
             <a class="navbar-brand" href="{{ route('top') }}">
-                <img src="{{ asset('img/NAGOYAロゴ.png') }}" alt="トップへ戻る" class="w-25">
+                <img src="{{ asset('img/NAGOYAロゴ.png') }}" alt="トップへ戻る">
             </a>
 
             {{-- 検索フォーム --}}
