@@ -1,51 +1,44 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\WebController;
-use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ReservationController;
 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
-Route::get('/',  [WebController::class, 'index'])->name('top');
+use App\Http\Controllers\{
+    ProfileController,
+    ProductController,
+    ReviewController,
+    FavoriteController,
+    UserController,
+    CartController,
+    WebController,
+    CheckoutController,
+    ReservationController,
+    StoreController
+};
 
-use App\Http\Controllers\StoreController;
+Route::get('/', [WebController::class, 'index'])->name('top');
 
-// 一般ユーザーが店舗一覧を見れるページ
+// 🔹 店舗関連（一般ユーザー用）
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
-
-// 店舗詳細ページを追加
 Route::get('/stores/{id}', [StoreController::class, 'show'])->name('stores.show');
-
-//🔍 検索用ルート
 Route::get('/search', [StoreController::class, 'search'])->name('stores.search');
 
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    // ======================
+    // 商品・レビュー・お気に入り
+    // ======================
     Route::resource('products', ProductController::class);
-
     Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
-
     Route::post('favorites/{product_id}', [FavoriteController::class, 'store'])->name('favorites.store');
     Route::delete('favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 
+    // ======================
+    // マイページ関連
+    // ======================
     Route::controller(UserController::class)->group(function () {
         Route::get('users/mypage', 'mypage')->name('mypage');
         Route::get('users/mypage/edit', 'edit')->name('mypage.edit');
@@ -58,6 +51,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users/mypage/cart_history/{num}', 'cart_history_show')->name('mypage.cart_history_show');
     });
 
+    // ======================
+    // カート・決済
+    // ======================
     Route::controller(CartController::class)->group(function () {
         Route::get('users/carts', 'index')->name('carts.index');
         Route::post('users/carts', 'store')->name('carts.store');
@@ -70,13 +66,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('checkout/success', 'success')->name('checkout.success');
     });
 
+    // ======================
+    //  予約関連（有料会員専用）
+    // ======================
     Route::controller(ReservationController::class)->group(function () {
-        Route::get('reservations/create', 'create')->name('reservations.create');
-        Route::post('reservations', 'store')->name('reservations.store');
         Route::get('reservations', 'index')->name('reservations.index');
         Route::delete('reservations/{id}', 'destroy')->name('reservations.destroy');
-    });   
+    });
 
-
+    //  店舗ごとの予約フォームと登録
+    Route::get('/stores/{id}/reserve', [ReservationController::class, 'create'])
+        ->name('stores.reserve_form');
+    Route::post('/stores/{id}/reserve', [ReservationController::class, 'store'])
+        ->name('stores.reserve');
 
 });
