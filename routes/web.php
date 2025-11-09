@@ -2,8 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-
-
 use App\Http\Controllers\{
     ProfileController,
     ProductController,
@@ -25,7 +23,6 @@ Route::get('/', [WebController::class, 'index'])->name('top');
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
 Route::get('/stores/{id}', [StoreController::class, 'show'])->name('stores.show');
 
-
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -33,8 +30,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ======================
     // 商品・レビュー・お気に入り
     // ======================
-   Route::resource('products', ProductController::class);
-    Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::resource('products', ProductController::class);
+
+    // 🔹 店舗レビュー投稿（コメントのみ）
+    Route::post('/stores/{store}/reviews', [ReviewController::class, 'store'])
+        ->name('reviews.store');
+
+    // 商品お気に入り
     Route::post('favorites/{product_id}', [FavoriteController::class, 'store'])->name('favorites.store');
     Route::delete('favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 
@@ -69,7 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // ======================
-    // 🔹 予約関連（ここを1つのブロックにまとめる）
+    // 🔹 予約関連
     // ======================
     Route::controller(ReservationController::class)->group(function () {
         Route::get('reservations', 'index')->name('reservations.index');
@@ -79,7 +81,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/stores/{id}/reserve', [ReservationController::class, 'create'])->name('stores.reserve_form');
     Route::post('/stores/{id}/reserve', [ReservationController::class, 'store'])->name('stores.reserve');
 
-  
+    Route::middleware(['auth', 'verified'])->group(function () {
+    // レビュー編集・削除
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+});
+
+    // 店舗レビュー投稿（コメントのみ）
+    Route::post('/stores/{store}/reviews', [ReviewController::class, 'store'])
+     ->name('reviews.store');
+
+// レビュー編集・更新・削除
+    Route::middleware('auth')->group(function () {
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+});
+
 
 
 });

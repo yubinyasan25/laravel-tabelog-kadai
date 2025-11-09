@@ -9,9 +9,19 @@ class Review extends Model
 {
     use HasFactory;
 
-    public function product()
+    protected $fillable = [
+        'store_id',
+        'user_id',
+        'comment',
+        'score',
+        'product_id',
+        'title',
+        'content',
+    ];
+
+    public function store()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Store::class);
     }
 
     public function user()

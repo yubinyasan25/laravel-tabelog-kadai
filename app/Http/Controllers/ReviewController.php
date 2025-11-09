@@ -3,32 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 投稿を保存
      */
-    public function store(Request $request)
+    public function store(Request $request, $storeId)
     {
         $request->validate([
-            'title' => 'required|max:20',
-            'content' => 'required'
+            'comment' => 'required|max:500',
         ]);
 
         $review = new Review();
-        $review->title = $request->input('title');
-        $review->content = $request->input('content');
-        $review->product_id = $request->input('product_id');
-        $review->user_id = Auth::user()->id;
-        $review->score = $request->input('score');
+        $review->comment = $request->input('comment');
+        $review->store_id = $storeId;
+        $review->user_id = Auth::id();
         $review->save();
 
-        return back();
+        return back()->with('success', 'レビューを投稿しました');
+    }
+
+    /**
+     * 編集フォーム表示
+     */
+    public function edit(Review $review)
+    {
+        // 投稿者本人だけ編集可能
+        $this->authorize('update', $review);
+
+        return view('reviews.edit', compact('review'));
+    }
+
+    /**
+     * 更新処理
+     */
+    public function update(Request $request, Review $review)
+    {
+        $this->authorize('update', $review);
+
+        $request->validate([
+            'comment' => 'required|max:500',
+        ]);
+
+        $review->comment = $request->input('comment');
+        $review->save();
+
+        return redirect()->route('stores.show', $review->store_id)
+                         ->with('success', 'レビューを更新しました');
+    }
+
+    /**
+     * 削除処理
+     */
+    public function destroy(Review $review)
+    {
+        $this->authorize('delete', $review);
+
+        $storeId = $review->store_id;
+        $review->delete();
+
+        return redirect()->route('stores.show', $storeId)
+                         ->with('success', 'レビューを削除しました');
     }
 }

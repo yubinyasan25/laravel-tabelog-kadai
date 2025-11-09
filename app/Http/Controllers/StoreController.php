@@ -30,15 +30,15 @@ class StoreController extends Controller
         }
 
         // 🔹 カテゴリIDからカテゴリ名を取得
-    $selectedCategory = null;
-    if (!empty($categoryId)) {
-        $selectedCategory = Category::find($categoryId);
+        $selectedCategory = null;
+        if (!empty($categoryId)) {
+            $selectedCategory = Category::find($categoryId);
 
-        // 🔹 「ALL」カテゴリ以外のときだけ絞り込み
-        if ($selectedCategory && $selectedCategory->name !== 'ALL') {
-            $query->where('category_id', $categoryId);
+            // 🔹 「ALL」カテゴリ以外のときだけ絞り込み
+            if ($selectedCategory && $selectedCategory->name !== 'ALL') {
+                $query->where('category_id', $categoryId);
+            }
         }
-    }
 
         // おすすめ順で取得
         $stores = $query->orderBy('recommend_flag', 'desc')->get();
@@ -55,9 +55,37 @@ class StoreController extends Controller
      */
     public function show($id)
     {
-        $store = Store::findOrFail($id);
+        // レビューもユーザー情報付きで取得（全件取得）
+        $store = Store::with('reviews.user')->findOrFail($id);
+
+        // 全カテゴリ取得（サイドバー用）
         $categories = Category::all();
 
         return view('stores.show', compact('store', 'categories'));
+    }
+
+    /**
+     * 予約フォームの送信処理
+     */
+    public function reserve(Request $request, $id)
+    {
+        $store = Store::findOrFail($id);
+
+        $request->validate([
+            'reservation_date' => 'required|date',
+            'reservation_time' => 'required',
+            'people' => 'required|integer|min:1|max:20',
+        ]);
+
+        // 予約作成
+        $store->reservations()->create([
+            'reservation_date' => $request->reservation_date,
+            'reservation_time' => $request->reservation_time,
+            'people' => $request->people,
+            'user_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('stores.show', $store->id)
+                         ->with('success', '予約が完了しました。');
     }
 }

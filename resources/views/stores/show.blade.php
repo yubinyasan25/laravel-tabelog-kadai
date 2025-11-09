@@ -4,19 +4,17 @@
 <div class="container py-5">
     <div class="row">
 
-       
-
         {{-- 右側店舗詳細 --}}
         <div class="col-md-9">
             <div class="card shadow-sm p-4">
+                {{-- 店舗情報 --}}
                 <h2 class="mb-3">{{ $store->name }}</h2>
                 <p class="text-muted mb-3">{{ $store->address }}</p>
 
-                @if($store->image)
-                    <img src="{{ asset('storage/' . $store->image) }}" 
-                         alt="{{ $store->name }}" 
-                         class="img-fluid mb-4 rounded">
-                @endif
+                <img src="{{ asset('img/default.jpg') }}" 
+                     alt="{{ $store->name }}" 
+                     class="img-fluid mb-4 rounded"
+                     style="width:30%; height:auto; object-fit:cover;">
 
                 <p>{{ $store->description }}</p>
 
@@ -34,7 +32,6 @@
 
                 <form action="{{ route('stores.reserve', $store->id) }}" method="POST">
                     @csrf
-
                     {{-- 日付 --}}
                     <div class="mb-3">
                         <label class="form-label">日付</label>
@@ -68,22 +65,63 @@
 
                     <button type="submit" class="btn btn-primary">予約する</button>
                 </form>
+
+                <hr>
+
+                {{-- レビュー投稿フォーム --}}
+                <h4 class="mt-4">レビュー投稿</h4>
+                @auth
+                    <form action="{{ route('reviews.store', $store->id) }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">コメント</label>
+                            <textarea name="comment" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">投稿する</button>
+                    </form>
+                @else
+                    <p>レビューを投稿するには <a href="{{ route('login') }}">ログイン</a> が必要です。</p>
+                @endauth
+
+                <hr>
+
+                {{-- 投稿済みレビュー一覧 --}}
+                <h4 class="mt-4">レビュー一覧</h4>
+                @forelse($store->reviews as $review)
+                    <div class="border p-2 mb-2">
+                        <strong>{{ $review->user->name }}</strong>：
+                        {{ $review->comment }}
+
+                        {{-- 編集・削除ボタン（本人のみ） --}}
+                        @can('update', $review)
+                            <a href="{{ route('reviews.edit', $review->id) }}" class="btn btn-sm btn-primary ms-2">編集</a>
+
+                            <form action="{{ route('reviews.destroy', $review->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                            </form>
+                        @endcan
+                    </div>
+                @empty
+                    <p>まだレビューはありません。</p>
+                @endforelse
             </div>
         </div>
 
     </div>
 </div>
 
-{{-- カテゴリリンクの共通スタイル（オレンジ枠・背景色・中央揃え） --}}
+{{-- カテゴリリンクの共通スタイル --}}
 <style>
     .category-item {
         height: 35px;
         background-color: #fff8e1;
         font-weight: 600;
         font-size: 0.9rem;
-        border: 2px solid orange; /* オレンジ枠線 */
+        border: 2px solid orange;
         text-align: center;
-        line-height: 31px; /* 高さに合わせて文字中央揃え */
+        line-height: 31px;
         transition: background-color 0.2s, border-color 0.2s;
     }
 
