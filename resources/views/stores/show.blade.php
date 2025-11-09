@@ -7,21 +7,39 @@
         {{-- 右側店舗詳細 --}}
         <div class="col-md-9">
             <div class="card shadow-sm p-4">
-                {{-- 店舗情報 --}}
+
+                {{-- 🔹 店舗名の上に横並びボタン --}}
+                <div class="d-flex align-items-center mb-3">
+                    {{-- 店舗一覧に戻る --}}
+                    <a href="{{ route('stores.index') }}" class="btn btn-secondary custom-btn me-2">
+                        店舗一覧に戻る
+                    </a>
+
+                    {{-- お気に入りボタン --}}
+                    @auth
+                    <button class="favorite-btn btn {{ auth()->user()->favorite_stores->contains($store->id) ? 'btn-danger' : 'btn-outline-secondary' }}"
+                            data-store-id="{{ $store->id }}">
+                        {{ auth()->user()->favorite_stores->contains($store->id) ? '❤️ お気に入り解除' : '🤍 お気に入り追加' }}
+                    </button>
+                    @endauth
+                </div>
+
+                {{-- 店舗名 --}}
                 <h2 class="mb-3">{{ $store->name }}</h2>
+
+                {{-- 住所 --}}
                 <p class="text-muted mb-3">{{ $store->address }}</p>
 
+                {{-- 店舗画像 --}}
                 <img src="{{ asset('img/default.jpg') }}" 
                      alt="{{ $store->name }}" 
                      class="img-fluid mb-4 rounded"
                      style="width:30%; height:auto; object-fit:cover;">
 
+                {{-- 店舗説明 --}}
                 <p>{{ $store->description }}</p>
 
                 <hr>
-                <a href="{{ route('stores.index') }}" class="btn btn-secondary mt-3 mb-4">
-                    店舗一覧に戻る
-                </a>
 
                 {{-- 予約フォーム --}}
                 <h4 class="mt-4">予約フォーム</h4>
@@ -32,13 +50,11 @@
 
                 <form action="{{ route('stores.reserve', $store->id) }}" method="POST">
                     @csrf
-                    {{-- 日付 --}}
                     <div class="mb-3">
                         <label class="form-label">日付</label>
                         <input type="date" name="reservation_date" class="form-control" required>
                     </div>
 
-                    {{-- 時間 --}}
                     <div class="mb-3">
                         <label class="form-label">時間</label>
                         <select name="reservation_time" class="form-select" required>
@@ -52,7 +68,6 @@
                         </select>
                     </div>
 
-                    {{-- 人数 --}}
                     <div class="mb-3">
                         <label class="form-label">人数</label>
                         <select name="people" class="form-select" required>
@@ -63,7 +78,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">予約する</button>
+                    <button type="submit" class="btn btn-primary custom-btn mb-3">予約する</button>
                 </form>
 
                 <hr>
@@ -77,7 +92,7 @@
                             <label class="form-label">コメント</label>
                             <textarea name="comment" class="form-control" rows="3" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-success">投稿する</button>
+                        <button type="submit" class="btn btn-success custom-btn mb-3">投稿する</button>
                     </form>
                 @else
                     <p>レビューを投稿するには <a href="{{ route('login') }}">ログイン</a> が必要です。</p>
@@ -92,43 +107,92 @@
                         <strong>{{ $review->user->name }}</strong>：
                         {{ $review->comment }}
 
-                        {{-- 編集・削除ボタン（本人のみ） --}}
                         @can('update', $review)
-                            <a href="{{ route('reviews.edit', $review->id) }}" class="btn btn-sm btn-primary ms-2">編集</a>
+                            <a href="{{ route('reviews.edit', $review->id) }}" class="btn btn-sm btn-primary ms-2 custom-btn-sm">編集</a>
 
                             <form action="{{ route('reviews.destroy', $review->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                                <button type="submit" class="btn btn-sm btn-danger custom-btn-sm">削除</button>
                             </form>
                         @endcan
                     </div>
                 @empty
                     <p>まだレビューはありません。</p>
                 @endforelse
+
             </div>
         </div>
 
     </div>
 </div>
 
-{{-- カテゴリリンクの共通スタイル --}}
-<style>
-    .category-item {
-        height: 35px;
-        background-color: #fff8e1;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: 2px solid orange;
-        text-align: center;
-        line-height: 31px;
-        transition: background-color 0.2s, border-color 0.2s;
-    }
+{{-- JSでお気に入り切替 --}}
+@auth
+<script>
+document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const storeId = this.dataset.storeId;
+        fetch(`/stores/${storeId}/favorite`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'added') {
+                this.textContent = '❤️ お気に入り解除';
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-danger');
+            } else {
+                this.textContent = '🤍 お気に入り追加';
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-outline-secondary');
+            }
+        });
+    });
+});
+</script>
+@endauth
 
-    .category-item:hover {
-        background-color: #fff3d6;
-        border-color: darkorange;
-        text-decoration: none;
-    }
+{{-- 共通スタイル --}}
+<style>
+.category-item {
+    height: 35px;
+    background-color: #fff8e1;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 2px solid orange;
+    text-align: center;
+    line-height: 31px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.category-item:hover {
+    background-color: #fff3d6;
+    border-color: darkorange;
+    text-decoration: none;
+}
+
+/* ボタン統一 */
+.custom-btn {
+    height: 38px !important;
+    line-height: 38px !important;
+    padding: 0 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1rem !important;
+}
+
+/* 小ボタン（編集・削除用） */
+.custom-btn-sm {
+    height: 30px !important;
+    line-height: 30px !important;
+    padding: 0 10px !important;
+    font-size: 0.8rem !important;
+}
 </style>
 @endsection

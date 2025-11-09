@@ -469,3 +469,13 @@ a img:hover {
     padding: 0; /* 内側余白削除 */
     object-fit: contain; /* 画像内余白を潰さず収める */
 }
+
+.custom-btn {
+    height: 38px !important; /* 高さを固定 */
+    line-height: 38px !important; /* テキストを中央揃え */
+    padding: 0 16px !important; /* 左右余白 */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1rem !important;
+}

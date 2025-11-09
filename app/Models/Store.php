@@ -34,7 +34,7 @@ class Store extends Model
     /** お気に入りユーザーとの中間リレーション */
     public function favorited_users()
     {
-        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+        return $this->belongsToMany(User::class, 'favorite_store_user', 'store_id', 'user_id')->withTimestamps();
     }
 
     /** 予約とのリレーション */

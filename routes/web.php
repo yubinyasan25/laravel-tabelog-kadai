@@ -15,6 +15,7 @@ use App\Http\Controllers\{
     StoreController
 };
 
+// トップページ
 Route::get('/', [WebController::class, 'index'])->name('top');
 
 // ======================
@@ -25,6 +26,9 @@ Route::get('/stores/{id}', [StoreController::class, 'show'])->name('stores.show'
 
 require __DIR__.'/auth.php';
 
+// ======================
+// 認証・メール認証済みユーザー用
+// ======================
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // ======================
@@ -32,13 +36,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ======================
     Route::resource('products', ProductController::class);
 
-    // 🔹 店舗レビュー投稿（コメントのみ）
-    Route::post('/stores/{store}/reviews', [ReviewController::class, 'store'])
-        ->name('reviews.store');
+    // 店舗レビュー投稿（コメントのみ）
+    Route::post('/stores/{store}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-    // 商品お気に入り
-    Route::post('favorites/{product_id}', [FavoriteController::class, 'store'])->name('favorites.store');
-    Route::delete('favorites/{product_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+    // 🔹 店舗お気に入り（商品版から店舗版に変更）
+    Route::post('/stores/{store}/favorite', [FavoriteController::class, 'toggle'])->name('stores.favorite.toggle');
+    Route::post('/stores/{store}/favorite/add', [FavoriteController::class, 'store'])->name('stores.favorite.store');
+    Route::delete('/stores/{store}/favorite/remove', [FavoriteController::class, 'destroy'])->name('stores.favorite.destroy');
 
     // ======================
     // マイページ関連
@@ -71,7 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // ======================
-    // 🔹 予約関連
+    // 予約関連
     // ======================
     Route::controller(ReservationController::class)->group(function () {
         Route::get('reservations', 'index')->name('reservations.index');
@@ -81,24 +85,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/stores/{id}/reserve', [ReservationController::class, 'create'])->name('stores.reserve_form');
     Route::post('/stores/{id}/reserve', [ReservationController::class, 'store'])->name('stores.reserve');
 
-    Route::middleware(['auth', 'verified'])->group(function () {
     // レビュー編集・削除
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-});
-
-    // 店舗レビュー投稿（コメントのみ）
-    Route::post('/stores/{store}/reviews', [ReviewController::class, 'store'])
-     ->name('reviews.store');
-
-// レビュー編集・更新・削除
-    Route::middleware('auth')->group(function () {
-    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
-    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-});
-
-
-
 });

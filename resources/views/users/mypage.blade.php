@@ -79,7 +79,7 @@
                         </div>
                         <div class="col-9 d-flex flex-column">
                             <h3 class="mb-0">ログアウト</h3>
-                            <p class="mb-0 text-secondary">SAMURAI Martからログアウトします</p>
+                            <p class="mb-0 text-secondary">NAGOYAMESHIからログアウトします</p>
                         </div>
                         <div class="col text-end">
                             <i class="fas fa-chevron-right fa-2x text-secondary"></i>

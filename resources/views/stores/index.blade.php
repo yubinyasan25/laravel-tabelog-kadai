@@ -7,7 +7,6 @@
         {{-- 左側カテゴリサイドバー --}}
         <div class="col-md-3 mb-4">
             <div class="card p-3 shadow-sm">
-                
                 <ul class="list-unstyled mb-0">
                     @foreach($categories as $category)
                         <li class="mb-2">
@@ -28,7 +27,6 @@
                 @forelse($stores as $store)
                     <div class="col-md-4 mb-4">
                         <div class="card h-100 shadow-sm">
-                            {{-- すべての店舗画像を共通の仮画像で表示 --}}
                             <img src="{{ asset('img/default.jpg') }}"
                                  alt="{{ $store->name }}"
                                  class="card-img-top"
@@ -37,10 +35,19 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ $store->name }}</h5>
                                 <p class="card-text text-muted">{{ Str::limit($store->description, 60, '...') }}</p>
+
                                 <a href="{{ route('stores.show', $store->id) }}"
-                                   class="btn btn-warning btn-sm text-dark fw-semibold">
+                                   class="btn btn-warning btn-sm text-dark fw-semibold mb-2">
                                     詳細を見る
                                 </a>
+
+                                {{-- 🔹 お気に入りボタン --}}
+                                @auth
+                                <button class="favorite-btn btn btn-sm {{ auth()->user()->favorite_stores->contains($store->id) ? 'btn-danger' : 'btn-outline-secondary' }}"
+                                        data-store-id="{{ $store->id }}">
+                                    {{ auth()->user()->favorite_stores->contains($store->id) ? '❤️ お気に入り解除' : '🤍 お気に入り追加' }}
+                                </button>
+                                @endauth
                             </div>
                         </div>
                     </div>
@@ -53,24 +60,53 @@
     </div>
 </div>
 
-{{-- カテゴリリンクのスタイル（トップ画面と同じオレンジ枠線） --}}
-<style>
-    .category-item {
-        height: 35px;
-        background-color: #fff8e1;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border: 2px solid orange; /* オレンジ枠線 */
-        text-align: center;
-        line-height: 31px; /* 高さに合わせて文字を中央揃え */
-        transition: background-color 0.2s, border-color 0.2s;
-    }
+{{-- JSでお気に入り切替 --}}
+@auth
+<script>
+document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const storeId = this.dataset.storeId;
+        fetch(`/stores/${storeId}/favorite`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'added') {
+                this.textContent = '❤️ お気に入り解除';
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-danger');
+            } else {
+                this.textContent = '🤍 お気に入り登録';
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-outline-secondary');
+            }
+        });
+    });
+});
+</script>
+@endauth
 
-    /* ホバー時に少し濃いオレンジに */
-    .category-item:hover {
-        background-color: #fff3d6;
-        border-color: darkorange;
-        text-decoration: none;
-    }
+{{-- カテゴリリンクのスタイル --}}
+<style>
+.category-item {
+    height: 35px;
+    background-color: #fff8e1;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 2px solid orange;
+    text-align: center;
+    line-height: 31px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.category-item:hover {
+    background-color: #fff3d6;
+    border-color: darkorange;
+    text-decoration: none;
+}
 </style>
 @endsection
