@@ -29,10 +29,16 @@ class StoreController extends Controller
             });
         }
 
-        // カテゴリ絞り込み
-        if (!empty($categoryId)) {
+        // 🔹 カテゴリIDからカテゴリ名を取得
+    $selectedCategory = null;
+    if (!empty($categoryId)) {
+        $selectedCategory = Category::find($categoryId);
+
+        // 🔹 「ALL」カテゴリ以外のときだけ絞り込み
+        if ($selectedCategory && $selectedCategory->name !== 'ALL') {
             $query->where('category_id', $categoryId);
         }
+    }
 
         // おすすめ順で取得
         $stores = $query->orderBy('recommend_flag', 'desc')->get();
@@ -41,7 +47,7 @@ class StoreController extends Controller
         $categories = Category::all();
 
         // ビューに渡す（categoryIdも渡す）
-        return view('stores.index', compact('stores', 'categories', 'keyword', 'categoryId'));
+        return view('stores.index', compact('stores', 'categories', 'keyword', 'categoryId','selectedCategory'));
     }
 
     /**

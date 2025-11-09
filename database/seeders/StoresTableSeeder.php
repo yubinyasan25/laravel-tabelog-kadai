@@ -119,5 +119,26 @@ class StoresTableSeeder extends Seeder
                 ]
             );
         }
+        // ==============================
+// 5. Fakerを使ってランダム店舗も追加
+// ==============================
+$faker = \Faker\Factory::create('ja_JP'); // 日本語対応
+
+for ($i = 0; $i < 20; $i++) {
+    $randomCategory = $faker->randomElement(array_keys($categoryModels));
+
+    Store::create([
+        'name' => $faker->company() . ' 名古屋店',
+        'description' => $faker->realText(80, 2),
+        'address' => '名古屋市' . $faker->citySuffix() . $faker->streetAddress(),
+        'image' => $faker->randomElement([
+            'https://loremflickr.com/400/300/food,japan',
+            'https://picsum.photos/400/300',
+            'https://placehold.jp/400x300.png'
+        ]),
+        'category_id' => $categoryModels[$randomCategory]->id,
+        'recommend_flag' => $faker->boolean(30), // 30%でおすすめON
+    ]);
+}
     }
 }
