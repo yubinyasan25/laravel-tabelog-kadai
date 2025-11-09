@@ -12,14 +12,16 @@ use App\Http\Controllers\{
     WebController,
     CheckoutController,
     ReservationController,
-    StoreController
+    StoreController,
+    SubscriptionController,
+    MypageController
 };
 
 // トップページ
 Route::get('/', [WebController::class, 'index'])->name('top');
 
 // ======================
-// 🔹 店舗関連（一般ユーザー用）
+// 店舗関連（一般ユーザー用）
 // ======================
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
 Route::get('/stores/{id}', [StoreController::class, 'show'])->name('stores.show');
@@ -31,22 +33,18 @@ require __DIR__.'/auth.php';
 // ======================
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // ======================
     // 商品・レビュー・お気に入り
-    // ======================
     Route::resource('products', ProductController::class);
 
     // 店舗レビュー投稿（コメントのみ）
     Route::post('/stores/{store}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-    // 🔹 店舗お気に入り（商品版から店舗版に変更）
+    // 店舗お気に入り
     Route::post('/stores/{store}/favorite', [FavoriteController::class, 'toggle'])->name('stores.favorite.toggle');
     Route::post('/stores/{store}/favorite/add', [FavoriteController::class, 'store'])->name('stores.favorite.store');
     Route::delete('/stores/{store}/favorite/remove', [FavoriteController::class, 'destroy'])->name('stores.favorite.destroy');
 
-    // ======================
     // マイページ関連
-    // ======================
     Route::controller(UserController::class)->group(function () {
         Route::get('users/mypage', 'mypage')->name('mypage');
         Route::get('users/mypage/edit', 'edit')->name('mypage.edit');
@@ -59,9 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users/mypage/cart_history/{num}', 'cart_history_show')->name('mypage.cart_history_show');
     });
 
-    // ======================
     // カート・決済
-    // ======================
     Route::controller(CartController::class)->group(function () {
         Route::get('users/carts', 'index')->name('carts.index');
         Route::post('users/carts', 'store')->name('carts.store');
@@ -74,9 +70,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('checkout/success', 'success')->name('checkout.success');
     });
 
-    // ======================
     // 予約関連
-    // ======================
     Route::controller(ReservationController::class)->group(function () {
         Route::get('reservations', 'index')->name('reservations.index');
         Route::delete('reservations/{id}', 'destroy')->name('reservations.destroy');
@@ -89,4 +83,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // ======================
+    // 有料会員関連
+    // ======================
+    Route::get('subscription/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
+    Route::get('subscription/success', [SubscriptionController::class, 'success'])->name('subscription.success');
+    Route::get('subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
+
+    // ======================
+    // マイページ
+    // ======================
+    Route::middleware('auth')->group(function () {
+        Route::get('/mypage', [MypageController::class, 'index'])->name('mypage.index');
+        Route::get('/mypage/edit', [MypageController::class, 'edit'])->name('mypage.edit');
+        Route::get('/mypage/cart_history', [MypageController::class, 'cart_history'])->name('mypage.cart_history');
+        Route::get('/mypage/edit_password', [MypageController::class, 'edit_password'])->name('mypage.edit_password');
+    });
 });
