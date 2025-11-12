@@ -17,10 +17,16 @@
 
                     {{-- お気に入りボタン --}}
                     @auth
-                    <button class="favorite-btn btn {{ auth()->user()->favorite_stores->contains($store->id) ? 'btn-danger' : 'btn-outline-secondary' }}"
-                            data-store-id="{{ $store->id }}">
-                        {{ auth()->user()->favorite_stores->contains($store->id) ? '❤️ お気に入り解除' : '🤍 お気に入り追加' }}
-                    </button>
+                        @if(auth()->user()->is_paid)
+                            <button class="favorite-btn btn {{ auth()->user()->favorite_stores->contains($store->id) ? 'btn-danger' : 'btn-outline-secondary' }}"
+                                    data-store-id="{{ $store->id }}">
+                                {{ auth()->user()->favorite_stores->contains($store->id) ? '❤️ お気に入り解除' : '🤍 お気に入り追加' }}
+                            </button>
+                        @else
+                            <p class="text-muted mb-0">お気に入りは有料会員限定</p>
+                        @endif
+                    @else
+                        <p class="text-muted mb-0">お気に入りはログイン後、有料会員限定で利用できます</p>
                     @endauth
                 </div>
 
@@ -48,52 +54,67 @@
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
 
-                <form action="{{ route('stores.reserve', $store->id) }}" method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label">日付</label>
-                        <input type="date" name="reservation_date" class="form-control" required>
-                    </div>
+                @auth
+                    @if(auth()->user()->is_paid)
+                        <form action="{{ route('stores.reserve', $store->id) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">日付</label>
+                                <input type="date" name="reservation_date" class="form-control" required>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">時間</label>
-                        <select name="reservation_time" class="form-select" required>
-                            <option value="">選択してください</option>
-                            @for($h = 11; $h <= 22; $h++)
-                                <option value="{{ sprintf('%02d:00', $h) }}">{{ sprintf('%02d:00', $h) }}</option>
-                                @if ($h < 22)
-                                    <option value="{{ sprintf('%02d:30', $h) }}">{{ sprintf('%02d:30', $h) }}</option>
-                                @endif
-                            @endfor
-                        </select>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">時間</label>
+                                <select name="reservation_time" class="form-select" required>
+                                    <option value="">選択してください</option>
+                                    @for($h = 11; $h <= 22; $h++)
+                                        <option value="{{ sprintf('%02d:00', $h) }}">{{ sprintf('%02d:00', $h) }}</option>
+                                        @if ($h < 22)
+                                            <option value="{{ sprintf('%02d:30', $h) }}">{{ sprintf('%02d:30', $h) }}</option>
+                                        @endif
+                                    @endfor
+                                </select>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">人数</label>
-                        <select name="people" class="form-select" required>
-                            <option value="">選択してください</option>
-                            @for ($i = 1; $i <= 20; $i++)
-                                <option value="{{ $i }}">{{ $i }}名</option>
-                            @endfor
-                        </select>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">人数</label>
+                                <select name="people" class="form-select" required>
+                                    <option value="">選択してください</option>
+                                    @for ($i = 1; $i <= 20; $i++)
+                                        <option value="{{ $i }}">{{ $i }}名</option>
+                                    @endfor
+                                </select>
+                            </div>
 
-                    <button type="submit" class="btn btn-primary custom-btn mb-3">予約する</button>
-                </form>
+                            <button type="submit" class="btn btn-primary custom-btn mb-3">予約する</button>
+                        </form>
+                    @else
+                        <p class="text-muted">予約は有料会員限定です。</p>
+                        <a href="{{ route('subscription.subscribe') }}" class="btn btn-warning">有料会員になる</a>
+                    @endif
+                @else
+                    <p class="text-muted">予約はログイン後、有料会員限定で利用できます</p>
+                    <a href="{{ route('login') }}" class="btn btn-outline-primary">ログインして予約する</a>
+                @endauth
 
                 <hr>
 
                 {{-- レビュー投稿フォーム --}}
                 <h4 class="mt-4">レビュー投稿</h4>
                 @auth
-                    <form action="{{ route('reviews.store', $store->id) }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label">コメント</label>
-                            <textarea name="comment" class="form-control" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-success custom-btn mb-3">投稿する</button>
-                    </form>
+                    @if(auth()->user()->is_paid)
+                        <form action="{{ route('reviews.store', $store->id) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">コメント</label>
+                                <textarea name="comment" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success custom-btn mb-3">投稿する</button>
+                        </form>
+                    @else
+                        <p class="text-muted">レビュー投稿は有料会員限定です。</p>
+                        <a href="{{ route('subscription.subscribe') }}" class="btn btn-warning">有料会員になる</a>
+                    @endif
                 @else
                     <p>レビューを投稿するには <a href="{{ route('login') }}">ログイン</a> が必要です。</p>
                 @endauth
@@ -129,6 +150,7 @@
 
 {{-- JSでお気に入り切替 --}}
 @auth
+@if(auth()->user()->is_paid)
 <script>
 document.querySelectorAll('.favorite-btn').forEach(button => {
     button.addEventListener('click', function() {
@@ -155,6 +177,7 @@ document.querySelectorAll('.favorite-btn').forEach(button => {
     });
 });
 </script>
+@endif
 @endauth
 
 {{-- 共通スタイル --}}

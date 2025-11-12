@@ -27,19 +27,26 @@
                 @forelse($stores as $store)
                     <div class="col-md-4 mb-4">
                         <div class="card h-100 shadow-sm">
-                            <img src="{{ asset('img/default.jpg') }}"
-                                 alt="{{ $store->name }}"
-                                 class="card-img-top"
-                                 style="height:200px; object-fit:cover;">
+
+                            {{-- 店舗画像をリンクで囲む --}}
+                            <a href="{{ route('stores.show', $store->id) }}">
+                                <img src="{{ asset('img/default.jpg') }}"
+                                     alt="{{ $store->name }}"
+                                     class="card-img-top"
+                                     style="height:200px; object-fit:cover;">
+                            </a>
 
                             <div class="card-body">
-                                <h5 class="card-title">{{ $store->name }}</h5>
+                                {{-- 店舗名をリンクで囲む --}}
+                                <h5 class="card-title">
+                                    <a href="{{ route('stores.show', $store->id) }}" class="text-dark text-decoration-none">
+                                        {{ $store->name }}
+                                    </a>
+                                </h5>
+
                                 <p class="card-text text-muted">{{ Str::limit($store->description, 60, '...') }}</p>
 
-                                <a href="{{ route('stores.show', $store->id) }}"
-                                   class="btn btn-warning btn-sm text-dark fw-semibold mb-2">
-                                    詳細を見る
-                                </a>
+                                
 
                                 {{-- 🔹 お気に入りボタン --}}
                                 @auth
@@ -80,7 +87,7 @@ document.querySelectorAll('.favorite-btn').forEach(button => {
                 this.classList.remove('btn-outline-secondary');
                 this.classList.add('btn-danger');
             } else {
-                this.textContent = '🤍 お気に入り登録';
+                this.textContent = '🤍 お気に入り追加';
                 this.classList.remove('btn-danger');
                 this.classList.add('btn-outline-secondary');
             }

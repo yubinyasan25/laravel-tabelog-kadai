@@ -10,7 +10,7 @@ class PaidUser
     public function handle(Request $request, Closure $next)
     {
         if (!auth()->check() || !auth()->user()->is_paid) {
-            return redirect()->route('home')->with('error', '有料会員限定機能です。');
+            return redirect()->route('top')->with('error', '有料会員限定機能です。');
         }
 
         return $next($request);

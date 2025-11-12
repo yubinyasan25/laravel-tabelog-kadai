@@ -66,4 +66,23 @@ class FavoriteController extends Controller
             return response()->json(['status' => 'added']);
         }
     }
+
+    // =========================
+    // お気に入り一覧（マイページ用）
+    // =========================
+    public function index()
+    {
+    $user = Auth::user();
+
+    // 有料会員限定
+    if (!$user->is_paid) {
+        return redirect()->route('mypage.index')->with('error', 'お気に入り一覧は有料会員限定です。');
+    }
+
+    // ユーザーのお気に入り店舗を取得
+    $favorite_stores = $user->favorite_stores()->paginate(10);
+
+    return view('mypage.favorite_stores', compact('favorite_stores'));
+    }
+
 }
