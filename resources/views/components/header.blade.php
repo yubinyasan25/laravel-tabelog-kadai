@@ -57,11 +57,7 @@
                                 <i class="far fa-heart"></i>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('carts.index') }}">
-                                <i class="fas fa-shopping-cart"></i>
-                            </a>
-                        </li>
+                       
                     @endguest
                 </ul>
             </div>

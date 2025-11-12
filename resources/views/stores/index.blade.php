@@ -48,13 +48,6 @@
 
                                 
 
-                                {{-- 🔹 お気に入りボタン --}}
-                                @auth
-                                <button class="favorite-btn btn btn-sm {{ auth()->user()->favorite_stores->contains($store->id) ? 'btn-danger' : 'btn-outline-secondary' }}"
-                                        data-store-id="{{ $store->id }}">
-                                    {{ auth()->user()->favorite_stores->contains($store->id) ? '❤️ お気に入り解除' : '🤍 お気に入り追加' }}
-                                </button>
-                                @endauth
                             </div>
                         </div>
                     </div>

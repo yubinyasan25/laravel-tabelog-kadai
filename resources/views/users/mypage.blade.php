@@ -34,25 +34,9 @@
 
             <hr class="my-0">
 
-            {{-- 注文履歴 --}}
-            <div class="container">
-                <a href="{{route('mypage.cart_history')}}" class="link-dark">
-                    <div class="row justify-content-between align-items-center py-4 samuraimart-mypage-link">
-                        <div class="col-1 ps-0 me-3">
-                            <i class="fas fa-archive fa-3x"></i>
-                        </div>
-                        <div class="col-9 d-flex flex-column">
-                            <h3 class="mb-0">注文履歴</h3>
-                            <p class="mb-0 text-secondary">過去に購入した商品を確認できます</p>
-                        </div>
-                        <div class="col text-end">
-                            <i class="fas fa-chevron-right fa-2x text-secondary"></i>
-                        </div>
-                    </div>
-                </a>
-            </div>
+           
 
-            <hr class="my-0">
+            
 
             {{-- パスワード変更 --}}
             <div class="container">

@@ -46,12 +46,12 @@ class SubscriptionController extends Controller
          $user = Auth::user();
 
     // 仮IDを使った解約処理（テスト用）
-    if ($user->stripe_subscription_id) {
+    //if ($user->stripe_subscription_id) {
         $user->is_paid_member = false;
         $user->stripe_subscription_id = null; // サブスクIDを削除
         $user->save();
         Auth::setUser($user->fresh());
-        }
-        return view('subscription.cancel');
+     //   }
+    return view('subscription.cancel');
     }
 }
