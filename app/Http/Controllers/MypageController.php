@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MypageController extends Controller
 {
@@ -12,21 +13,22 @@ class MypageController extends Controller
         return view('users.mypage');
     }
 
-    // 会員情報編集ページ（必要なら追加）
+    // 会員情報編集ページ
     public function edit()
     {
-        return view('mypage.edit');
+       $user = Auth::user();
+       return view('users.edit', compact('user'));
     }
 
-    // 注文履歴ページ（必要なら追加）
+    // 注文履歴ページ
     public function cart_history()
     {
-        return view('mypage.cart_history');
+        return view('users.cart_history_index'); // ← ファイル名に合わせる
     }
 
-    // パスワード変更ページ（必要なら追加）
+    // パスワード変更ページ
     public function edit_password()
     {
-        return view('mypage.edit_password');
+        return view('users.edit_password'); // ← ファイル名に合わせる
     }
 }

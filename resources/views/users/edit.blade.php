@@ -6,7 +6,7 @@
         <div class="col-md-5">
             <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('mypage') }}">マイページ</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('users.mypage') }}">マイページ</a></li>
                     <li class="breadcrumb-item active" aria-current="page">会員情報の編集</li>
                 </ol>
             </nav>
@@ -15,7 +15,7 @@
 
             <hr class="mb-4">
 
-            <form method="POST" action="{{ route('mypage') }}">
+            <form method="POST" action="{{ route('users.mypage.update') }}">
                 @csrf
                 <input type="hidden" name="_method" value="PUT">
 
@@ -117,7 +117,7 @@
                         <div class="modal-body">
                             <p class="text-center mb-0">一度退会するとデータはすべて削除され、<br>復旧はできません。</p>
                         </div>
-                        <form action="{{ route('mypage.destroy') }}" method="POST">
+                        <form action="{{ route('users.mypage.destroy') }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <div class="modal-footer">

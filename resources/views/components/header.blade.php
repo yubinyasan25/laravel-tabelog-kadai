@@ -45,7 +45,7 @@
                         </li>
                     @else
                         <li class="nav-item me-4">
-                            <a class="nav-link fw-bold" href="{{ route('mypage') }}">
+                            <a class="nav-link fw-bold" href="{{ route('users.mypage') }}">
                                 <i class="fas fa-user me-2"></i>マイページ
                             </a>
                         </li>
