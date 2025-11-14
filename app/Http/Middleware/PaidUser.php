@@ -9,7 +9,7 @@ class PaidUser
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!auth()->check() || !auth()->user()->is_paid) {
+        if (!auth()->check() || !auth()->user()->is_paid_member) {
             return redirect()->route('top')->with('error', '有料会員限定機能です。');
         }
 

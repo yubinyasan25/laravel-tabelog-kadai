@@ -55,8 +55,9 @@ class StoreController extends Controller
      */
     public function show($id)
     {
-        // レビューもユーザー情報付きで取得（全件取得）
-        $store = Store::with('reviews.user')->findOrFail($id);
+       $store = Store::with(['reviews' => function($query) {
+        $query->latest()->take(3)->with('user'); // 最新3件
+       }])->findOrFail($id);
 
         // 全カテゴリ取得（サイドバー用）
         $categories = Category::all();
