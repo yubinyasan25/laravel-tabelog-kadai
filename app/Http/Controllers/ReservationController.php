@@ -13,6 +13,7 @@ class ReservationController extends Controller
      * 予約フォームを表示
      */
     public function create($store_id)
+
     {
         $store = Store::findOrFail($store_id);
         return view('reservations.create', compact('store'));

@@ -64,5 +64,15 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->withTimestamps();
     }
 
+      public function getIsPaidAttribute()
+    {
+        return $this->is_paid_member;
+    }
+
+    public function setIsPaidAttribute($value)
+    {
+        $this->is_paid_member = $value;
+    }
+
 
 }

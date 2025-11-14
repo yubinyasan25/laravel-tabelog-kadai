@@ -32,10 +32,11 @@ class SubscriptionController extends Controller
     public function success()
     {
         $user = Auth::user();
-        $user->is_paid_member = true;
-
+        $user->is_paid = true;  // ← フラグ名を統一
         $user->stripe_subscription_id = 'test_sub_' . uniqid();
         $user->save();
+
+        Auth::setUser($user->fresh()); // 最新情報に更新
 
         return view('subscription.success');
     }
@@ -45,13 +46,12 @@ class SubscriptionController extends Controller
     {
          $user = Auth::user();
 
-    // 仮IDを使った解約処理（テスト用）
-    //if ($user->stripe_subscription_id) {
-        $user->is_paid_member = false;
-        $user->stripe_subscription_id = null; // サブスクIDを削除
+        // 仮IDを使った解約処理（テスト用）
+        $user->is_paid = false;  // ← フラグ名を統一
+        $user->stripe_subscription_id = null;
         $user->save();
         Auth::setUser($user->fresh());
-     //   }
-    return view('subscription.cancel');
+
+        return view('subscription.cancel');
     }
 }

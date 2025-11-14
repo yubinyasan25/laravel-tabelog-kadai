@@ -22,16 +22,17 @@
                                     data-store-id="{{ $store->id }}">
                                 {{ auth()->user()->favorite_stores->contains($store->id) ? '❤️ お気に入り解除' : '🤍 お気に入り追加' }}
                             </button>
-                        @else
-                            <p class="text-muted mb-0">お気に入りは有料会員限定</p>
                         @endif
-                    @else
-                        <p class="text-muted mb-0">お気に入りはログイン後、有料会員限定で利用できます</p>
                     @endauth
                 </div>
 
                 {{-- 店舗名 --}}
                 <h2 class="mb-3">{{ $store->name }}</h2>
+
+                {{-- デバッグ用: ログイン中ユーザーの is_paid を確認 --}}
+                @auth
+                <p>is_paid: {{ auth()->user()->is_paid ? 'true' : 'false' }}</p>
+                @endauth
 
                 {{-- 住所 --}}
                 <p class="text-muted mb-3">{{ $store->address }}</p>
@@ -93,8 +94,7 @@
                         <a href="{{ route('subscription.subscribe') }}" class="btn btn-warning">有料会員になる</a>
                     @endif
                 @else
-                    <p class="text-muted">予約はログイン後、有料会員限定で利用できます</p>
-                    <a href="{{ route('login') }}" class="btn btn-outline-primary">ログインして予約する</a>
+                    <p class="text-muted">予約をするには <a href="{{ route('login') }}">ログイン後、有料会員登録</a> が必要です。</p>
                 @endauth
 
                 <hr>
@@ -116,7 +116,7 @@
                         <a href="{{ route('subscription.subscribe') }}" class="btn btn-warning">有料会員になる</a>
                     @endif
                 @else
-                    <p>レビューを投稿するには <a href="{{ route('login') }}">ログイン</a> が必要です。</p>
+                    <p class="text-muted">レビューを投稿するには <a href="{{ route('login') }}">ログイン後、有料会員登録</a> が必要です。</p>
                 @endauth
 
                 <hr>
@@ -215,7 +215,7 @@ document.querySelectorAll('.favorite-btn').forEach(button => {
     height: 30px !important;
     line-height: 30px !important;
     padding: 0 10px !important;
-    font-size: 0.8rem !important;
+    font-size: 0.8rem;
 }
 </style>
 @endsection
