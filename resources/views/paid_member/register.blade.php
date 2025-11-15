@@ -2,43 +2,49 @@
 
 @section('content')
 <div class="container pt-5">
-    <h1>有料会員登録</h1>
-    
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    <div class="row justify-content-center">
+        <div class="col-md-4">
 
-    <form id="paid-member-form" action="{{ route('paid.store') }}" method="POST">
-        @csrf
-        <div id="card-element" class="mb-3"></div>
-        <button type="submit" class="btn btn-primary">有料会員登録</button>
-    </form>
+            <h1 class="mb-4">有料会員登録</h1>
+
+            <p class="text-muted mb-4">
+                月額300円のプレミアム会員サービスに登録するため、決済ページへ進みます。
+            </p>
+
+            {{-- 成功・エラーメッセージ --}}
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <hr class="mb-4">
+
+            {{-- Checkout セッション作成 --}}
+            <form action="{{ route('paid.session') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn samuraimart-submit-button w-100 text-white mb-4">
+                    決済画面へ進む
+                </button>
+            </form>
+
+            <hr class="mb-4">
+
+            <div class="text-center">
+                <a class="fw-bold" href="{{ route('users.mypage') }}">
+                    マイページに戻る
+                </a>
+            </div>
+
+        </div>
+    </div>
 </div>
-
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-    const stripe = Stripe('{{ env('STRIPE_KEY') }}');
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
-    cardElement.mount('#card-element');
-
-    const form = document.getElementById('paid-member-form');
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-        });
-        if(error){
-            alert(error.message);
-            return;
-        }
-        const hiddenInput = document.createElement('input');
-        hiddenInput.setAttribute('type','hidden');
-        hiddenInput.setAttribute('name','payment_method');
-        hiddenInput.setAttribute('value',paymentMethod.id);
-        form.appendChild(hiddenInput);
-        form.submit();
-    });
-</script>
 @endsection

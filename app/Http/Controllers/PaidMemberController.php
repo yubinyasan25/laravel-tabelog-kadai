@@ -3,134 +3,110 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Stripe\StripeClient;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
+use Stripe\Subscription;
+use App\Models\User;
 
 class PaidMemberController extends Controller
 {
     /**
-     * 有料会員登録画面を表示
+     * 有料会員登録ページ
      */
     public function showForm()
     {
-        $user = auth()->user();
-        $card = null;
+         $user = auth()->user();
 
-        if ($user->stripe_payment_method_id) {
-            $stripe = new StripeClient(env('STRIPE_SECRET'));
-            $card = $stripe->paymentMethods->retrieve($user->stripe_payment_method_id);
-        }
+    // すでに有料会員ならマイページへリダイレクト
+    if ($user->is_paid_member) {
+        return redirect()->route('users.mypage')
+            ->with('success', '既に有料会員です');
+    }
 
-        return view('paid_member.register', compact('card'));
+    return view('paid_member.register');
     }
 
     /**
-     * ① 有料会員登録（カード登録）
+     * Stripe Checkout セッション作成
      */
-    public function store(Request $request)
+    public function createCheckoutSession()
     {
-        $request->validate([
-            'payment_method' => 'required|string',
+        $user = auth()->user();
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $session = StripeSession::create([
+            'payment_method_types' => ['card'],
+            'mode' => 'subscription', // 定期課金
+            'line_items' => [[
+                'price' => env('STRIPE_PRICE_ID'),
+                'quantity' => 1,
+            ]],
+            'customer_email' => $user->email,
+            // Checkout セッション ID を success_url に渡す
+            'success_url' => route('paid.success', ['session_id' => '{CHECKOUT_SESSION_ID}']),
+            'cancel_url'  => route('paid.cancelPage'),
         ]);
 
-        $user = auth()->user();
-        $stripe = new StripeClient(env('STRIPE_SECRET'));
+        return redirect($session->url);
+    }
 
-        // Stripe Customer が無ければ作成
-        if (!$user->stripe_customer_id) {
-            $customer = $stripe->customers->create([
-                'email' => $user->email,
-                'name'  => $user->name,
-            ]);
+    /**
+     * 決済成功ページ（安全に有料会員反映）
+     */
+    public function success(Request $request)
+    {
+        $sessionId = $request->query('session_id');
+        if (!$sessionId) {
+            return redirect()->route('paid.register')->with('error', 'セッションIDがありません');
+        }
 
-            $user->stripe_customer_id = $customer->id;
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        try {
+            // Checkout セッションを取得
+            $session = StripeSession::retrieve($sessionId);
+            $subscriptionId = $session->subscription;
+            $customerEmail = $session->customer_email;
+
+            // Subscription の状態を確認
+            $subscription = Subscription::retrieve($subscriptionId);
+
+            if (!in_array($subscription->status, ['active', 'trialing'])) {
+                return redirect()->route('paid.register')->with('error', 'サブスクが有効ではありません');
+            }
+
+            // DB 更新
+            $user = User::where('email', $customerEmail)->firstOrFail();
+            $user->is_paid_member = true;
+            $user->stripe_subscription_id = $subscriptionId;
             $user->save();
+
+        } catch (\Exception $e) {
+            return redirect()->route('paid.register')->with('error', 'Stripe情報の取得に失敗しました: '.$e->getMessage());
         }
 
-        // PaymentMethod を Stripe Customer に登録
-        $stripe->paymentMethods->attach(
-            $request->payment_method,
-            ['customer' => $user->stripe_customer_id]
-        );
-
-        // デフォルト支払方法として設定
-        $stripe->customers->update($user->stripe_customer_id, [
-            'invoice_settings' => [
-                'default_payment_method' => $request->payment_method,
-            ],
-        ]);
-
-        // DB 更新
-        $user->update([
-            'stripe_payment_method_id' => $request->payment_method,
-            'is_paid_member' => true,
-        ]);
-
-        return redirect()->route('users.mypage')->with('success', '有料会員登録が完了しました！');
+        return view('paid_member.success');
     }
 
     /**
-     * ② カード変更（マイページで更新）
+     * キャンセルページ
      */
-    public function updateCard(Request $request)
+    public function cancelPage()
     {
-        $request->validate([
-            'payment_method' => 'required|string',
-        ]);
-
-        $user = auth()->user();
-        $stripe = new StripeClient(env('STRIPE_SECRET'));
-
-        // 既存カードがあれば detach
-        if ($user->stripe_payment_method_id) {
-            $stripe->paymentMethods->detach(
-                $user->stripe_payment_method_id
-            );
-        }
-
-        // 新しいカードを attach
-        $stripe->paymentMethods->attach(
-            $request->payment_method,
-            ['customer' => $user->stripe_customer_id]
-        );
-
-        // デフォルト支払方法を更新
-        $stripe->customers->update($user->stripe_customer_id, [
-            'invoice_settings' => [
-                'default_payment_method' => $request->payment_method,
-            ],
-        ]);
-
-        // DB 更新
-        $user->update([
-            'stripe_payment_method_id' => $request->payment_method,
-        ]);
-
-        return back()->with('success', 'カード情報を更新しました！');
+        return view('paid_member.cancel');
     }
 
     /**
-     * ③ 有料会員退会（カード削除＋フラグOFF）
+     * 有料会員退会（DB反映のみ、Webhook不要）
      */
     public function cancel()
     {
         $user = auth()->user();
-        $stripe = new StripeClient(env('STRIPE_SECRET'));
+        $user->is_paid_member = false;
+        $user->stripe_subscription_id = null;
+        $user->save();
 
-        // Stripe のカード削除
-        if ($user->stripe_payment_method_id) {
-            $stripe->paymentMethods->detach(
-                $user->stripe_payment_method_id
-            );
-        }
-
-        // DB 側をリセット
-        $user->update([
-            'is_paid_member' => false,
-            'stripe_payment_method_id' => null,
-        ]);
-
-        return redirect()->route('mypage.index')->with('success', '有料会員を退会しました。');
+        return redirect()->route('users.mypage')->with('success', '有料会員を退会しました');
     }
-
-    
 }

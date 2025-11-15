@@ -52,11 +52,7 @@
 
                         <div class="vr me-4 samuraimart-vertical-bar"></div>
 
-                        <li class="nav-item me-4">
-                            <a class="nav-link" href="{{ route('mypage.favorite') }}">
-                                <i class="far fa-heart"></i>
-                            </a>
-                        </li>
+                        
                        
                     @endguest
                 </ul>

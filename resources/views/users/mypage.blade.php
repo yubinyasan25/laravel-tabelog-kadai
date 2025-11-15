@@ -64,8 +64,9 @@
                             @endif
 
                         @else
-                            <a href="{{ route('paid.register') }}" class="btn btn-primary mt-2">
-                                月額300円で有料会員になる
+                            <a href="{{ route('paid.register') }}" 
+                            class="btn samuraimart-submit-button w-100 text-white mt-2">
+                            月額300円で有料会員になる
                             </a>
                         @endif
                     </div>

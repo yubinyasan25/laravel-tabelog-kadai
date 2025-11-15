@@ -108,7 +108,7 @@
                         @else
                             <p class="text-muted">
                                 予約をするには 
-                                <a href="{{ route('login') }}" style="color:#2ecc71; font-weight:bold; text-decoration:none;">ログイン後、有料会員登録</a>
+                                <a href="{{ route('login') }}" style="color:#2ecc71; text-decoration:none;">ログイン後、有料会員登録</a>
                                 が必要です。
                             </p>
                         @endauth
@@ -136,7 +136,7 @@
                         @else
                             <p class="text-muted">
                                 レビューを投稿するには 
-                                <a href="{{ route('login') }}" style="color:#2ecc71; font-weight:bold; text-decoration:none;">ログイン後、有料会員登録</a>
+                                <a href="{{ route('login') }}" style="color:#2ecc71; text-decoration:none;">ログイン後、有料会員登録</a>
                                 が必要です。
                             </p>
                         @endauth
