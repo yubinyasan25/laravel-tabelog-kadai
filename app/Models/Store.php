@@ -43,5 +43,10 @@ class Store extends Model
         return $this->hasMany(Reservation::class);
     }
 
+    public function getImageUrlAttribute()
+    {
+    return $this->image ? asset('img/' . $this->image) : asset('img/default.jpg');
+    }
+
     
 }
