@@ -36,7 +36,7 @@
 
                             {{-- 店舗画像をリンクで囲む --}}
                             <a href="{{ route('stores.show', $store->id) }}">
-                                <img src="{{ asset('img/' . ($store->image && file_exists(public_path('img/' . $store->image)) ? $store->image : 'default.jpg')) }}"
+                                <img src="{{ asset('img/' . ($store->image ?? 'default.jpg')) }}"
                                      alt="{{ $store->name }}"
                                      class="card-img-top"
                                      style="height:200px; object-fit:cover;">
