@@ -7,9 +7,9 @@
 
     {{-- 写真3枚を横並び --}}
     <div class="d-flex w-100 h-100">
-        <img src="{{ asset('img/味噌煮込み.JPG') }}" alt="写真1" class="flex-grow-1" style="object-fit: cover; height: 100%;">
-        <img src="{{ asset('img/森.JPG') }}" alt="写真2" class="flex-grow-1" style="object-fit: cover; height: 100%;">
-        <img src="{{ asset('img/トースト.JPG') }}" alt="写真3" class="flex-grow-1" style="object-fit: cover; height: 100%;">
+        <img src="{{ asset('img/miso-nikomi.jpg') }}" alt="写真1" class="flex-grow-1" style="object-fit: cover; height: 100%;">
+        <img src="{{ asset('img/mori.jpg') }}" alt="写真2" class="flex-grow-1" style="object-fit: cover; height: 100%;">
+        <img src="{{ asset('img/toast.jpg') }}" alt="写真3" class="flex-grow-1" style="object-fit: cover; height: 100%;">
     </div>
 
     {{-- 写真の中央にタイトル --}}
