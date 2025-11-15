@@ -38,7 +38,9 @@
                 {{-- 店舗画像とレビュー一覧を横並び --}}
                 <div class="row mb-4">
                     <div class="col-md-4">
-                        <img src="{{ asset('img/default.jpg') }}" alt="{{ $store->name }}" class="img-fluid rounded" style="width:100%; height:auto; object-fit:cover;">
+                        <img src="{{ asset('img/' . ($store->image ?? 'default.jpg')) }}"
+                         alt="{{ $store->name }}" 
+                         class="img-fluid rounded" style="width:100%; height:auto; object-fit:cover;">
                         <p class="mt-2">{{ $store->description }}</p>
                     </div>
                     <div class="col-md-8">
