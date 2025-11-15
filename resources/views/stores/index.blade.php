@@ -3,12 +3,12 @@
 @section('content')
 <div class="container py-5">
     <div class="row">
-         {{-- 左上にトップページリンク --}}
-       <div class="mb-2">
-       <a href="{{ url()->previous() }}" style="color:#2ecc71; text-decoration:none;">
-        ← 前のページに戻る
-        </a>
-    </div>
+        {{-- 左上に前のページリンク --}}
+        <div class="mb-2">
+            <a href="{{ url()->previous() }}" style="color:#2ecc71; text-decoration:none;">
+                ← 前のページに戻る
+            </a>
+        </div>
 
         {{-- 左側カテゴリサイドバー --}}
         <div class="col-md-3 mb-4">
@@ -36,7 +36,7 @@
 
                             {{-- 店舗画像をリンクで囲む --}}
                             <a href="{{ route('stores.show', $store->id) }}">
-                                <img src="{{ asset('img/' . ($store->image ?? 'default.jpg')) }}"
+                                <img src="{{ asset('img/' . ($store->image && file_exists(public_path('img/' . $store->image)) ? $store->image : 'default.jpg')) }}"
                                      alt="{{ $store->name }}"
                                      class="card-img-top"
                                      style="height:200px; object-fit:cover;">
@@ -51,8 +51,6 @@
                                 </h5>
 
                                 <p class="card-text text-muted">{{ Str::limit($store->description, 60, '...') }}</p>
-
-                                
 
                             </div>
                         </div>

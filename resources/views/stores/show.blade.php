@@ -3,10 +3,10 @@
 @section('content')
 <div class="container py-5">
 
-    {{-- 枠外左上に店舗一覧リンク --}}
+    {{-- 左上に前のページリンク --}}
     <div class="mb-2">
         <a href="{{ url()->previous() }}" style="color:#2ecc71; text-decoration:none;">
-        ← 前のページに戻る
+            ← 前のページに戻る
         </a>
     </div>
 
@@ -20,7 +20,6 @@
                 <div class="d-flex align-items-center mb-3">
                     @auth
                         @if(auth()->user()->is_paid)
-                            {{-- ここを修正：登録前 赤 / 登録後 白 --}}
                             <button class="favorite-btn btn {{ auth()->user()->favorite_stores->contains($store->id) ? 'btn-outline-secondary' : 'btn-danger' }}"
                                     data-store-id="{{ $store->id }}">
                                 {{ auth()->user()->favorite_stores->contains($store->id) ? '❤️ お気に入り解除' : '🤍 お気に入り追加' }}
@@ -33,14 +32,14 @@
                 <h2 class="mb-3">{{ $store->name }}</h2>
 
                 {{-- 住所 --}}
-                <p class="text-muted mb-3">{{ $store->address }}</Ｊp>
+                <p class="text-muted mb-3">{{ $store->address }}</p>
 
                 {{-- 店舗画像とレビュー一覧を横並び --}}
                 <div class="row mb-4">
                     <div class="col-md-4">
-                        <img src="{{ asset('img/' . ($store->image ?? 'default.jpg')) }}"
-                         alt="{{ $store->name }}" 
-                         class="img-fluid rounded" style="width:100%; height:auto; object-fit:cover;">
+                        <img src="{{ asset('img/' . ($store->image && file_exists(public_path('img/' . $store->image)) ? $store->image : 'default.jpg')) }}"
+                             alt="{{ $store->name }}" 
+                             class="img-fluid rounded" style="width:100%; height:auto; object-fit:cover;">
                         <p class="mt-2">{{ $store->description }}</p>
                     </div>
                     <div class="col-md-8">
@@ -171,12 +170,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(res => res.json())
             .then(data => {
                 if(data.status === 'added') {
-                    // 登録後は白
                     this.textContent = '❤️ お気に入り解除';
                     this.classList.remove('btn-danger');
                     this.classList.add('btn-outline-secondary');
                 } else {
-                    // 登録前は赤
                     this.textContent = '🤍 お気に入り追加';
                     this.classList.remove('btn-outline-secondary');
                     this.classList.add('btn-danger');
