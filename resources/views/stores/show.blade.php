@@ -5,8 +5,8 @@
 
     {{-- 枠外左上に店舗一覧リンク --}}
     <div class="mb-2">
-        <a href="{{ route('stores.index') }}" style="color:#2ecc71;  text-decoration:none;">
-            ← 店舗一覧にもどる
+        <a href="{{ url()->previous() }}" style="color:#2ecc71; text-decoration:none;">
+        ← 前のページに戻る
         </a>
     </div>
 
@@ -101,8 +101,9 @@
                                 </form>
                             @else
                                 <p class="text-muted">
-                                    予約は有料会員限定です。
-                                    <a href="{{ route('subscription.subscribe') }}" style="color:#2ecc71; font-weight:bold; text-decoration:none;">有料会員登録</a>
+                                    予約をするには
+                                    <a href="{{ route('paid.register') }}" style="color:#2ecc71; text-decoration:none;">有料会員登録</a>
+                                    が必要です。
                                 </p>
                             @endif
                         @else
@@ -129,8 +130,9 @@
                                 </form>
                             @else
                                 <p class="text-muted">
-                                    レビュー投稿は有料会員限定です。
-                                    <a href="{{ route('subscription.subscribe') }}" style="color:#2ecc71; font-weight:bold; text-decoration:none;">有料会員登録</a>
+                                    レビューを投稿するには
+                                    <a href="{{ route('paid.register') }}" style="color:#2ecc71; text-decoration:none;">有料会員登録</a>
+                                    が必要です。
                                 </p>
                             @endif
                         @else

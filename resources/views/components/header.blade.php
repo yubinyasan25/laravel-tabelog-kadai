@@ -35,14 +35,7 @@
                             <a class="nav-link fw-bold" href="{{ route('login') }}">ログイン</a>
                         </li>
 
-                        <div class="vr me-4 samuraimart-vertical-bar"></div>
-
-                        <li class="nav-item me-4">
-                            <a class="nav-link" href="{{ route('login') }}"><i class="far fa-heart"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}"><i class="fas fa-shopping-cart"></i></a>
-                        </li>
+                                             
                     @else
                         <li class="nav-item me-4">
                             <a class="nav-link fw-bold" href="{{ route('users.mypage') }}">
@@ -50,8 +43,7 @@
                             </a>
                         </li>
 
-                        <div class="vr me-4 samuraimart-vertical-bar"></div>
-
+                      
                         
                        
                     @endguest

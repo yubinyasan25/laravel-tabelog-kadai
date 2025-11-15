@@ -3,6 +3,12 @@
 @section('content')
 <div class="container py-5">
     <div class="row">
+         {{-- 左上にトップページリンク --}}
+       <div class="mb-2">
+       <a href="{{ url()->previous() }}" style="color:#2ecc71; text-decoration:none;">
+        ← 前のページに戻る
+        </a>
+    </div>
 
         {{-- 左側カテゴリサイドバー --}}
         <div class="col-md-3 mb-4">

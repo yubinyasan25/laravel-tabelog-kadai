@@ -2,6 +2,16 @@
 
 @section('content')
 <div class="container mt-4">
+
+    {{-- 左上に前のページに戻るリンク --}}
+    <div class="mb-3">
+        <a href="javascript:history.back()" 
+           onclick="if(!document.referrer) location.href='{{ url('/') }}';"
+           style="color:#2ecc71; text-decoration:none;">
+            ← 前のページに戻る
+        </a>
+    </div>
+
     <h2>予約一覧</h2>
 
     @if ($reservations->isEmpty())

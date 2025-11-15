@@ -1,52 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container pt-2">
+<div class="container pt-5">
     <div class="row justify-content-center">
-        <div class="col-md-5">
-            <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('users.mypage') }}">マイページ</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">パスワード変更</li>
-                </ol>
-            </nav>
-
+        <div class="col-md-4">
             <h1 class="mb-3">パスワード変更</h1>
 
-            <hr class="mb-4">
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-            <form method="post" action="{{ route('mypage.update_password') }}">
-                {{ csrf_field() }}
-                <input type="hidden" name="_method" value="PUT">
+            <form method="POST" action="{{ route('mypage.update_password') }}">
+                @csrf
+                @method('PUT')
 
-                <div class="form-group row mb-3">
-                    <label for="password" class="col-md-5 col-form-label text-md-left fw-medium">新しいパスワード</label>
-
-                    <div class="col-md-7">
-                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror samuraimart-login-input" name="password" required autocomplete="new-password">
-
-                        @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
+                <div class="form-group mb-3 d-flex align-items-center">
+                    <label style="width: 120px;">新しいパスワード</label>
+                    <input type="password" name="password" 
+                           class="form-control @error('password') is-invalid @enderror samuraimart-login-input" 
+                           required>
+                    @error('password')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>パスワードを正しく入力してください。</strong>
+                        </span>
+                    @enderror
                 </div>
 
-                <div class="form-group row mb-4">
-                    <label for="password-confirm" class="col-md-5 col-form-label text-md-left fw-medium">新しいパスワード（確認用）</label>
-
-                    <div class="col-md-7">
-                        <input id="password-confirm" type="password" class="form-control samuraimart-login-input" name="password_confirmation" required autocomplete="new-password">
-                    </div>
+                <div class="form-group mb-4 d-flex align-items-center">
+                    <label style="width: 120px;">パスワード確認</label>
+                    <input type="password" name="password_confirmation" 
+                           class="form-control @error('password_confirmation') is-invalid @enderror samuraimart-login-input" 
+                           required>
+                    @error('password_confirmation')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>確認用パスワードを正しく入力してください。</strong>
+                        </span>
+                    @enderror
                 </div>
 
-                <hr class="mb-4">
-
-                <button type="submit" class="btn samuraimart-submit-button w-100 text-white">
+                <button type="submit" class="btn samuraimart-submit-button w-100 text-white mb-4">
                     更新
                 </button>
             </form>
+            <div class="text-center">
+                 <a class="fw-bold" href="{{ route('users.mypage') }}">
+                マイページに戻る
+
         </div>
     </div>
 </div>
