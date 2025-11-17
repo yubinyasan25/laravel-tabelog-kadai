@@ -79,14 +79,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // ----------------------
-    // お気に入り関連（例）
+    // お気に入り関連
     // ----------------------
     Route::controller(FavoriteController::class)->group(function () {
    
     Route::get('/favorites', 'index')->name('favorites.index'); // お気に入り一覧
     Route::post('/stores/{store}/favorite', 'toggle')->name('favorites.toggle');
 
-    // 通常削除用（必要なら残す）
+    // 通常削除用
     Route::delete('/stores/{store}/favorite', 'destroy')->name('favorites.destroy');
     });  
 
