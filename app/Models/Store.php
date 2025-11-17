@@ -14,10 +14,11 @@ class Store extends Model
      * 保存可能なカラム
      */
     protected $fillable = [
-        'name',        // 店舗名
-        'description', // 店舗の紹介文
-        'address',     // 住所
-        'image',       // 店舗画像
+        'name',          // 店舗名
+        'description',   // 店舗の紹介文
+        'address',       // 住所
+        'image',         // 店舗画像
+        'category_id',   // カテゴリーID
     ];
 
     /** レビューとのリレーション */
@@ -36,6 +37,12 @@ class Store extends Model
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    /** カテゴリーとのリレーション */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
     /**

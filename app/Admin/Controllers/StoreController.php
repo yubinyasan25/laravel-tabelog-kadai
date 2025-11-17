@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Store;
+use App\Models\Category;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -33,6 +34,7 @@ class StoreController extends AdminController
         $grid->column('name', '店舗名');
         $grid->column('address', '住所');
         $grid->column('description', '紹介文');
+        $grid->column('category.name', 'カテゴリー'); // ★ 追加
         $grid->column('image', '画像');
 
         // 詳細ボタン無効
@@ -44,6 +46,9 @@ class StoreController extends AdminController
         $grid->filter(function ($filter) {
             $filter->like('name', '店舗名');
             $filter->like('address', '住所');
+            $filter->equal('category_id', 'カテゴリー')->select(
+                Category::pluck('name', 'id')
+            ); // ★ 追加
         });
 
         return $grid;
@@ -81,6 +86,12 @@ class StoreController extends AdminController
         $form->text('name', '店舗名')->rules('required|max:255');
         $form->text('address', '住所')->rules('required|max:255');
         $form->textarea('description', '紹介文');
+
+        // ★ カテゴリー追加（必須）
+        $form->select('category_id', 'カテゴリー')
+            ->options(Category::pluck('name', 'id'))
+            ->rules('required');
+
         $form->text('image', '画像ファイル名');
 
         return $form;
