@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class UserController extends Controller
@@ -63,11 +64,10 @@ class UserController extends Controller
     }
 
     // 退会処理
-    public function destroy()
+     public function destroy(Request $request)
     {
-        $user = auth()->user();
-        $user->delete();
-
-        return redirect('/')->with('success', '退会しました');
+        Auth::user()->delete();
+        return redirect('/');
     }
+    
 }

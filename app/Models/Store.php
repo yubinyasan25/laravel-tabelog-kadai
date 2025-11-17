@@ -10,20 +10,15 @@ class Store extends Model
 {
     use HasFactory, Sortable;
 
+    /**
+     * 保存可能なカラム
+     */
     protected $fillable = [
-        'name',             // 店舗名
-        'description',      // 店舗の紹介文
-        'address',          // 住所
-        'category_id',      // カテゴリID（例：ラーメン、味噌カツなど）
-        'image',            // 店舗画像
-        'recommend_flag',   // おすすめ店舗フラグ
+        'name',        // 店舗名
+        'description', // 店舗の紹介文
+        'address',     // 住所
+        'image',       // 店舗画像
     ];
-
-    /** カテゴリとのリレーション */
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
 
     /** レビューとのリレーション */
     public function reviews()
@@ -43,10 +38,11 @@ class Store extends Model
         return $this->hasMany(Reservation::class);
     }
 
+    /**
+     * 画像 URL を取得
+     */
     public function getImageUrlAttribute()
     {
-    return $this->image ? asset('img/' . $this->image) : asset('img/default.jpg');
+        return $this->image ? asset('img/' . $this->image) : asset('img/default.jpg');
     }
-
-    
 }

@@ -41,11 +41,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users/mypage', 'mypage')->name('users.mypage');
         Route::get('users/mypage/edit', 'edit')->name('users.mypage.edit');
         Route::put('users/mypage', 'update')->name('users.mypage.update');
-
         Route::get('users/mypage/password/edit', 'editPassword')->name('mypage.edit_password');
         Route::put('users/mypage/password', 'updatePassword')->name('mypage.update_password');
-
         Route::delete('users/mypage/delete', 'destroy')->name('users.mypage.destroy');
+        Route::delete('users/mypage/delete', 'destroy')->name('mypage.destroy');
     });
 
     // ----------------------

@@ -479,3 +479,9 @@ a img:hover {
     justify-content: center !important;
     font-size: 1rem !important;
 }
+
+.samuraimart-delete-submit-button {
+    border-radius: 2px;
+    color: #ffffff;
+    background-color: #d94b0e;
+}

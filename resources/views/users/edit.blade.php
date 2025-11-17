@@ -82,9 +82,42 @@
             </form>
 
             <div class="text-center">
-                 <a class="fw-bold" href="{{ route('users.mypage') }}">
-                マイページに戻る
+                {{-- マイページに戻るリンク --}}
+                <a class="fw-bold" href="{{ route('users.mypage') }}">
+                    マイページに戻る
                 </a>
+
+                <hr>
+
+                {{-- 退会リンク（マイページと同じ見た目） --}}
+                <form method="POST" action="{{ route('mypage.destroy') }}" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+
+                    <a href="#" class="fw-bold" data-bs-toggle="modal" data-bs-target="#delete-user-confirm-modal">
+                        退会する
+                    </a>
+
+                    {{-- 確認モーダル --}}
+                    <div class="modal fade" id="delete-user-confirm-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteUserModalLabel">本当に退会しますか？</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-center">一度退会するとデータはすべて削除され復旧はできません。</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                                    <button type="submit" class="btn btn-danger">退会する</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>

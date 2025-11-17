@@ -881,12 +881,12 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "Encore\\Admin\\AdminServiceProvider"
-                    ],
                     "aliases": {
                         "Admin": "Encore\\Admin\\Facades\\Admin"
-                    }
+                    },
+                    "providers": [
+                        "Encore\\Admin\\AdminServiceProvider"
+                    ]
                 }
             },
             "autoload": {
@@ -9058,12 +9058,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.0.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

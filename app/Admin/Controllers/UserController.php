@@ -30,9 +30,13 @@ class UserController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('email', __('Email'));
         $grid->column('email_verified_at', __('Email verified at'));
+        $grid->column('is_paid_member', __('Is paid member'));
+        $grid->column('stripe_subscription_id', __('Stripe subscription id'));
+        $grid->column('stripe_customer_id', __('Stripe customer id'));
         $grid->column('postal_code', __('Postal code'));
         $grid->column('address', __('Address'));
         $grid->column('phone', __('Phone'));
+        $grid->column('stripe_payment_method_id', __('Stripe payment method id'));
         $grid->column('created_at', __('Created at'))->sortable();
         $grid->column('updated_at', __('Updated at'))->sortable();
         $grid->column('deleted_at', __('Deleted at'))->sortable();
@@ -64,9 +68,13 @@ class UserController extends AdminController
         $show->field('name', __('Name'));
         $show->field('email', __('Email'));
         $show->field('email_verified_at', __('Email verified at'));
+        $show->field('is_paid_member', __('Is paid member'));
+        $show->field('stripe_subscription_id', __('Stripe subscription id'));
+        $show->field('stripe_customer_id', __('Stripe customer id'));
         $show->field('postal_code', __('Postal code'));
         $show->field('address', __('Address'));
         $show->field('phone', __('Phone'));
+        $show->field('stripe_payment_method_id', __('Stripe payment method id'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->field('deleted_at', __('Deleted at'));
@@ -87,9 +95,13 @@ class UserController extends AdminController
         $form->email('email', __('Email'));
         $form->datetime('email_verified_at', __('Email verified at'))->default(date('Y-m-d H:i:s'));
         $form->password('password', __('Password'));
+        $form->switch('is_paid_member', __('Is paid member'));
+        $form->text('stripe_subscription_id', __('Stripe subscription id'));
+        $form->text('stripe_customer_id', __('Stripe customer id'));
         $form->text('postal_code', __('Postal code'));
         $form->textarea('address', __('Address'));
         $form->mobile('phone', __('Phone'));
+        $form->text('stripe_payment_method_id', __('Stripe payment method id'));
         $form->datetime('deleted_at', __('Deleted at'))->default(NULL);
 
         $form->saving(function (Form $form) {
