@@ -50,6 +50,6 @@ class Store extends Model
      */
     public function getImageUrlAttribute()
     {
-        return $this->image ? asset('img/' . $this->image) : asset('img/default.jpg');
+        return $this->image ? asset('img/' . $this->image) : asset('img/default.JPG');
     }
 }
