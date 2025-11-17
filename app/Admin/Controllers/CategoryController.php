@@ -15,7 +15,7 @@ class CategoryController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Category';
+    protected $title = 'カテゴリー管理';
 
     /**
      * Make a grid builder.
@@ -26,16 +26,15 @@ class CategoryController extends AdminController
     {
         $grid = new Grid(new Category());
 
-        $grid->column('id', __('Id'))->sortable();
-        $grid->column('name', __('Name'));
-        $grid->column('description', __('Description'));
-        $grid->column('created_at', __('Created at'))->sortable();
-        $grid->column('updated_at', __('Updated at'))->sortable();
-        $grid->column('major_category_id', __('Major category id'));
+        $grid->column('id', __('ID'))->sortable();
+        $grid->column('name', __('カテゴリー名'));
+        $grid->column('description', __('説明'));
+        $grid->column('created_at', __('作成日'))->sortable();
+        $grid->column('updated_at', __('更新日'))->sortable();
 
-        $grid->filter(function($filter) {
+        $grid->filter(function ($filter) {
             $filter->like('name', 'カテゴリー名');
-            $filter->between('created_at', '登録日')->datetime();
+            $filter->between('created_at', '作成日')->datetime();
         });
 
         return $grid;
@@ -51,12 +50,11 @@ class CategoryController extends AdminController
     {
         $show = new Show(Category::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('name', __('Name'));
-        $show->field('description', __('Description'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-        $show->field('major_category_id', __('Major category id'));
+        $show->field('id', __('ID'));
+        $show->field('name', __('カテゴリー名'));
+        $show->field('description', __('説明'));
+        $show->field('created_at', __('作成日'));
+        $show->field('updated_at', __('更新日'));
 
         return $show;
     }
@@ -70,9 +68,8 @@ class CategoryController extends AdminController
     {
         $form = new Form(new Category());
 
-        $form->text('name', __('Name'));
-        $form->textarea('description', __('Description'));
-        $form->number('major_category_id', __('Major category id'));
+        $form->text('name', 'カテゴリー名')->required();
+        $form->textarea('description', '説明');
 
         return $form;
     }
